@@ -3,9 +3,9 @@ import models.entities as entities
 import models.schemas as schemas
 
 
-def db_get_user(db: Session, user: str):
+def db_get_user(db: Session, username: str):
     return db.query(
-        entities.Users).filter(entities.Users.username == user).first()
+        entities.Users).filter(entities.Users.username == username).first()
 
 
 def db_create_user(db: Session, user: schemas.UserRequest):

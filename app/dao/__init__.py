@@ -5,3 +5,4 @@ from .member_dao import *
 from .news_dao import *
 from .publication_dao import *
 from .user_dao import *
+from .carousel_dao import *

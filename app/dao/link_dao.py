@@ -8,8 +8,13 @@ def db_list_link(db: Session):
     return link_list
 
 
-def db_add_link(db: Session, link: schemas.LinkRequest):
-    db_link = entities.Links(title=link.title,
+def db_add_link(
+    db: Session,
+    link: schemas.LinkRequest,
+    username: str,
+):
+    db_link = entities.Links(create_user=username,
+                             title=link.title,
                              content=link.content,
                              image=link.image,
                              url=link.url,
@@ -30,7 +35,8 @@ def db_delete_link(db: Session, id: int):
 
 
 def db_modify_link(db: Session, link: schemas.LinkResponse):
-    db_link = db.query(entities.Links).filter(entities.Links.id == link.id).first()
+    db_link = db.query(
+        entities.Links).filter(entities.Links.id == link.id).first()
     if not db_link:
         return False
     db_link.title = link.title

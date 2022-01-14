@@ -6,3 +6,4 @@ from .publication import *
 from .activity import *
 from .link import *
 from .response import *
+from .carousel import *

@@ -1,13 +1,15 @@
+from typing import Optional
 import dao
 from common import get_mysql
-from fastapi import Depends
-from fastapi.routing import APIRoute
+from fastapi import Depends, APIRouter
 from fastapi_jwt_auth import AuthJWT
-from models import schemas
 from fastapi_pagination import Page, paginate
+from models import schemas
 from sqlalchemy.orm.session import Session
 
-router = APIRoute(
+from models.entities import user
+
+router = APIRouter(
     prefix="/publication",
     tags=["publication"],
     responses={404: {
@@ -17,25 +19,26 @@ router = APIRoute(
 
 
 @router.get("/list", response_model=Page[schemas.PublicationResponse])
-def list(db: Session = Depends[get_mysql]):
-    db_publication_list = dao.db_list_publication(db)
+def list(member_id: Optional[int] = -1, db: Session = Depends(get_mysql)):
+    db_publication_list = dao.db_list_publication(db, member_id=member_id)
     return paginate(db_publication_list)
 
 
 @router.post("/add", response_model=schemas.PublicationResponse)
 def add(publication: schemas.PublicationRequest,
         authorize: AuthJWT = Depends(),
-        db: Session = Depends[get_mysql]):
+        db: Session = Depends(get_mysql)):
     authorize.jwt_required()
+    username = authorize.get_jwt_subject()
     
-    db_publication = dao.db_add_publication(db, publication)
+    db_publication = dao.db_add_publication(db, publication, username)
     return db_publication
 
 
 @router.post("/modify", response_model=schemas.MessageResponse)
 def modify(publication: schemas.PublicationRequest,
            authorize: AuthJWT = Depends(),
-           db: Session = Depends[get_mysql]):
+           db: Session = Depends(get_mysql)):
     authorize.jwt_required()
 
     result = dao.db_modify_publication(db, publication)
@@ -48,11 +51,11 @@ def modify(publication: schemas.PublicationRequest,
 @router.post("/delete/{id}", response_model=schemas.MessageResponse)
 def modify(id: int,
            authorize: AuthJWT = Depends(),
-           db: Session = Depends[get_mysql]):
+           db: Session = Depends(get_mysql)):
     authorize.jwt_required()
     
     result = dao.db_delete_publication(db, id)
     return schemas.MessageResponse(
         status=200 if result else 401,
-        message=f'Modify Publication {"Success" if result else "Failed"}',
+        message=f'Delete Publication {"Success" if result else "Failed"}',
     )

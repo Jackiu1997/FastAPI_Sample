@@ -8,8 +8,13 @@ def db_list_interest(db: Session):
     return interest_list
 
 
-def db_add_interest(db: Session, interest: schemas.InterestRequest):
-    db_interest = entities.Interests(title=interest.title,
+def db_add_interest(
+    db: Session,
+    interest: schemas.InterestRequest,
+    username: str,
+):
+    db_interest = entities.Interests(create_user=username,
+                                     title=interest.title,
                                      content=interest.content,
                                      image=interest.image)
     db.add(db_interest)
@@ -27,9 +32,10 @@ def db_delete_interest(db: Session, id: int):
     db.commit()
     return True
 
+
 def db_modify_activity(db: Session, interest: schemas.InterestResponse):
-    db_interest = db.query(
-        entities.Activities).filter(entities.Activities.id == interest.id).first()
+    db_interest = db.query(entities.Activities).filter(
+        entities.Activities.id == interest.id).first()
     if not db_interest:
         return False
     db_interest.title = interest.title

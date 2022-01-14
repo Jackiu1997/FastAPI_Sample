@@ -1,13 +1,12 @@
 import dao
 from common import get_mysql
-from fastapi import Depends
-from fastapi.routing import APIRoute
+from fastapi import Depends, APIRouter
 from fastapi_jwt_auth import AuthJWT
 from models import schemas
 from fastapi_pagination import Page, paginate
 from sqlalchemy.orm.session import Session
 
-router = APIRoute(
+router = APIRouter(
     prefix="/news",
     tags=["news"],
     responses={404: {
@@ -17,7 +16,7 @@ router = APIRoute(
 
 
 @router.get("/list", response_model=Page[schemas.NewsResponse])
-def list(db: Session = Depends[get_mysql]):
+def list(db: Session = Depends(get_mysql)):
     db_news_list = dao.db_list_news(db)
     return paginate(db_news_list)
 
@@ -25,17 +24,18 @@ def list(db: Session = Depends[get_mysql]):
 @router.post("/add", response_model=schemas.NewsResponse)
 def add(news: schemas.NewsRequest,
         authorize: AuthJWT = Depends(),
-        db: Session = Depends[get_mysql]):
+        db: Session = Depends(get_mysql)):
     authorize.jwt_required()
+    username = authorize.get_jwt_subject()
     
-    db_news = dao.db_add_news(db, news)
+    db_news = dao.db_add_news(db, news, username)
     return db_news
 
 
 @router.post("/modify", response_model=schemas.MessageResponse)
 def modify(news: schemas.NewsRequest,
            authorize: AuthJWT = Depends(),
-           db: Session = Depends[get_mysql]):
+           db: Session = Depends(get_mysql)):
     authorize.jwt_required()
 
     result = dao.db_modify_news(db, news)
@@ -48,11 +48,11 @@ def modify(news: schemas.NewsRequest,
 @router.post("/delete/{id}", response_model=schemas.MessageResponse)
 def modify(id: int,
            authorize: AuthJWT = Depends(),
-           db: Session = Depends[get_mysql]):
+           db: Session = Depends(get_mysql)):
     authorize.jwt_required()
     
     result = dao.db_delete_news(db, id)
     return schemas.MessageResponse(
         status=200 if result else 401,
-        message=f'Modify News {"Success" if result else "Failed"}',
+        message=f'Delete News {"Success" if result else "Failed"}',
     )

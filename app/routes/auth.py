@@ -1,12 +1,11 @@
 import dao
 from common import get_mysql
-from fastapi import Depends, HTTPException
-from fastapi.routing import APIRoute
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi_jwt_auth import AuthJWT
 from models import schemas
 from sqlalchemy.orm.session import Session
 
-router = APIRoute(
+router = APIRouter(
     prefix="/auth",
     tags=["auth"],
     responses={404: {
@@ -16,16 +15,16 @@ router = APIRoute(
 
 
 @router.post("/regist", response_model=schemas.UserResponse)
-def regist(user: schemas.UserRequest, db: Session = Depends[get_mysql]):
+def regist(user: schemas.UserRequest, db: Session = Depends(get_mysql)):
     db_user = dao.db_create_user(db, user)
     return db_user
 
 
-@router.post("/login", response_model=schemas.UserResponse)
+@router.post("/login")
 def login(user: schemas.UserRequest,
           authorize: AuthJWT = Depends(),
-          db: Session = Depends[get_mysql]):
-    db_user = dao.db_get_user(db, user)
+          db: Session = Depends(get_mysql)):
+    db_user = dao.db_get_user(db, user.username)
     if not db_user:
         raise HTTPException(status_code=404, detail="User Not Found")
     elif db_user.hashed_password != user.password + "notreallyhashed":

@@ -5,9 +5,9 @@ from .base import Base
 class Links(Base):
     __tablename__ = "links"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    title = Column(Text, nullable=False, comment="链接标题")
-    content = Column(Text, comment="链接描述")
-    image = Column(Text, comment="链接图片")
+    title = Column(Text, nullable=False, comment="标题")
+    content = Column(Text, comment="描述")
+    image = Column(Text, comment="图片")
     url = Column(Text, comment="链接URL")
     category = Column(
         Integer,

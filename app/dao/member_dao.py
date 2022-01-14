@@ -3,22 +3,32 @@ import models.entities as entities
 import models.schemas as schemas
 
 
-def db_list_member(db: Session):
-    member_list = db.query(entities.Members).all()
+def db_list_member(db: Session, category: int = -1):
+    if category < 0:
+        member_list = db.query(entities.Members).all()
+    else:
+        member_list = db.query(entities.Members).filter(
+            entities.Members.category == category).all()
     return member_list
 
 
-def db_add_member(db: Session, member: schemas.MemberRequest):
-    db_member = entities.Members(name=member.name,
-                                 avatar=member.avatar,
-                                 education=member.education,
-                                 graduated=member.graduated,
-                                 research_background=member.research_background,
-                                 email=member.email,
-                                 telephone=member.telephone,
-                                 address=member.address,
-                                 tutor=member.tutor,
-                                 category=member.category)
+def db_add_member(
+    db: Session,
+    member: schemas.MemberRequest,
+    username: str,
+):
+    db_member = entities.Members(
+        create_user=username,
+        name=member.name,
+        avatar=member.avatar,
+        education=member.education,
+        graduated=member.graduated,
+        research_background=member.research_background,
+        email=member.email,
+        telephone=member.telephone,
+        address=member.address,
+        tutor=member.tutor,
+        category=member.category)
     db.add(db_member)
     db.commit()
     db.refresh(db_member)

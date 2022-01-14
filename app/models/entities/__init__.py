@@ -7,4 +7,5 @@ from .news import News
 from .publication import Publications
 from .user import Users
 from .enums import Enums
+from .carousel import Carousels
 from .publication_member import PublicationMember

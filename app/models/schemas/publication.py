@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel
 
 
@@ -10,6 +10,8 @@ class PublicationRequest(BaseModel):
     date: Optional[str] = None
     link: Optional[str] = None
     show_on_main: bool = True
+    # 关联的作者
+    linked_members: List[int] = []
 
 
 class PublicationResponse(PublicationRequest):

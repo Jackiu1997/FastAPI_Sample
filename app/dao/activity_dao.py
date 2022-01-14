@@ -1,5 +1,7 @@
+from venv import create
 from sqlalchemy.orm import Session
 import models.entities as entities
+from models.entities import user
 import models.schemas as schemas
 
 
@@ -8,8 +10,13 @@ def db_list_activity(db: Session):
     return activity_list
 
 
-def db_add_activity(db: Session, activity: schemas.ActivityRequest):
-    db_activity = entities.Activities(title=activity.title,
+def db_add_activity(
+    db: Session,
+    activity: schemas.ActivityRequest,
+    username: str,
+):
+    db_activity = entities.Activities(create_user=username,
+                                      title=activity.title,
                                       content=activity.content,
                                       date=activity.date,
                                       image=activity.image)
@@ -30,8 +37,8 @@ def db_delete_activity(db: Session, id: int):
 
 
 def db_modify_activity(db: Session, activity: schemas.ActivityResponse):
-    db_activity = db.query(
-        entities.Activities).filter(entities.Activities.id == activity.id).first()
+    db_activity = db.query(entities.Activities).filter(
+        entities.Activities.id == activity.id).first()
     if not db_activity:
         return False
     db_activity.title = activity.title
