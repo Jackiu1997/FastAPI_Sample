@@ -1,7 +1,7 @@
 from typing import Optional
 import dao
 from common import get_mysql
-from fastapi import Depends, APIRouter
+from fastapi import Depends, APIRouter, HTTPException
 from fastapi_jwt_auth import AuthJWT
 from fastapi_pagination import Page, paginate
 from models import schemas
@@ -30,32 +30,32 @@ def add(publication: schemas.PublicationRequest,
         db: Session = Depends(get_mysql)):
     authorize.jwt_required()
     username = authorize.get_jwt_subject()
-    
+
     db_publication = dao.db_add_publication(db, publication, username)
     return db_publication
 
 
-@router.post("/modify", response_model=schemas.MessageResponse)
+@router.post("/modify")
 def modify(publication: schemas.PublicationRequest,
            authorize: AuthJWT = Depends(),
            db: Session = Depends(get_mysql)):
     authorize.jwt_required()
 
     result = dao.db_modify_publication(db, publication)
-    return schemas.MessageResponse(
-        status=200 if result else 401,
-        message=f'Modify Publication {"Success" if result else "Failed"}',
+    raise HTTPException(
+        status_code=200 if result else 401,
+        detail=f'Modify Publication {"Success" if result else "Failed"}',
     )
 
 
-@router.post("/delete/{id}", response_model=schemas.MessageResponse)
-def modify(id: int,
+@router.post("/delete/{id}")
+def delete(id: int,
            authorize: AuthJWT = Depends(),
            db: Session = Depends(get_mysql)):
     authorize.jwt_required()
-    
+
     result = dao.db_delete_publication(db, id)
-    return schemas.MessageResponse(
-        status=200 if result else 401,
-        message=f'Delete Publication {"Success" if result else "Failed"}',
+    raise HTTPException(
+        status_code=200 if result else 401,
+        detail=f'Delete Publication {"Success" if result else "Failed"}',
     )

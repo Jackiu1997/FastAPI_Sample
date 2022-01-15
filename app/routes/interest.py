@@ -1,7 +1,7 @@
 from typing import List
 import dao
 from common import get_mysql
-from fastapi import Depends,APIRouter
+from fastapi import Depends, APIRouter, HTTPException
 from fastapi_jwt_auth import AuthJWT
 from models import schemas
 from sqlalchemy.orm.session import Session
@@ -27,32 +27,32 @@ def add(interest: schemas.InterestRequest,
         db: Session = Depends(get_mysql)):
     authorize.jwt_required()
     username = authorize.get_jwt_subject()
-    
+
     db_interest = dao.db_add_interest(db, interest, username)
     return db_interest
 
 
-@router.post("/modify", response_model=schemas.MessageResponse)
+@router.post("/modify")
 def modify(interest: schemas.InterestRequest,
            authorize: AuthJWT = Depends(),
            db: Session = Depends(get_mysql)):
     authorize.jwt_required()
 
     result = dao.db_modify_interest(db, interest)
-    return schemas.MessageResponse(
-        status=200 if result else 401,
-        message=f'Modify Interest {"Success" if result else "Failed"}',
+    raise HTTPException(
+        status_code=200 if result else 401,
+        detail=f'Modify Interest {"Success" if result else "Failed"}',
     )
 
 
-@router.post("/delete/{id}", response_model=schemas.MessageResponse)
-def modify(id: int,
+@router.post("/delete/{id}")
+def delete(id: int,
            authorize: AuthJWT = Depends(),
            db: Session = Depends(get_mysql)):
     authorize.jwt_required()
-    
+
     result = dao.db_delete_interest(db, id)
-    return schemas.MessageResponse(
-        status=200 if result else 401,
-        message=f'Delete Interest {"Success" if result else "Failed"}',
+    raise HTTPException(
+        status_code=200 if result else 401,
+        detail=f'Delete Interest {"Success" if result else "Failed"}',
     )

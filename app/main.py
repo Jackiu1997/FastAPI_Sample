@@ -81,7 +81,7 @@ def authjwt_exception_handler(request: Request, exception: AuthJWTException):
 
 # 加载模块路由
 from routes import (activity, auth, interest, link, member, news, publication,
-                    utils)
+                    carousel, utils)
 
 app.include_router(auth.router)
 app.include_router(news.router)
@@ -90,6 +90,7 @@ app.include_router(utils.router)
 app.include_router(member.router)
 app.include_router(interest.router)
 app.include_router(activity.router)
+app.include_router(carousel.router)
 app.include_router(publication.router)
 
 # 添加分页支持

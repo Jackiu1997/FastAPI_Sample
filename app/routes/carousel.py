@@ -1,6 +1,6 @@
 import dao
 from common import get_mysql
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi_jwt_auth import AuthJWT
 from fastapi_pagination import Page, paginate
 from models import schemas
@@ -32,14 +32,14 @@ def add(carousel: schemas.CarouselRequest,
     return db_carousel
 
 
-@router.post("/delete/{id}", response_model=schemas.MessageResponse)
-def modify(id: int,
+@router.post("/delete/{id}")
+def delete(id: int,
            authorize: AuthJWT = Depends(),
            db: Session = Depends(get_mysql)):
     authorize.jwt_required()
     
     result = dao.db_delete_carousel(db, id)
-    return schemas.MessageResponse(
-        status=200 if result else 401,
-        message=f'Delete Carousel {"Success" if result else "Failed"}',
+    raise HTTPException(
+        status_code=200 if result else 401,
+        detail=f'Delete Carousel {"Success" if result else "Failed"}',
     )
