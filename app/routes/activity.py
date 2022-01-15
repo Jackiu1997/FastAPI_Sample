@@ -40,7 +40,7 @@ def modify(activity: schemas.ActivityRequest,
 
     result = dao.db_modify_activity(db, activity)
     raise HTTPException(
-        status_code=200 if result else 401,
+        status_code=200 if result else 400,
         detail=f'Modify Activity {"Success" if result else "Failed"}',
     )
 
@@ -53,6 +53,6 @@ def delete(id: int,
 
     result = dao.db_delete_activity(db, id)
     raise HTTPException(
-        status_code=200 if result else 401,
+        status_code=200 if result else 400,
         detail=f'Delete Activity {"Success" if result else "Failed"}',
     )

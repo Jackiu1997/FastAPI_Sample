@@ -40,7 +40,7 @@ def modify(interest: schemas.InterestRequest,
 
     result = dao.db_modify_interest(db, interest)
     raise HTTPException(
-        status_code=200 if result else 401,
+        status_code=200 if result else 400,
         detail=f'Modify Interest {"Success" if result else "Failed"}',
     )
 
@@ -53,6 +53,6 @@ def delete(id: int,
 
     result = dao.db_delete_interest(db, id)
     raise HTTPException(
-        status_code=200 if result else 401,
+        status_code=200 if result else 400,
         detail=f'Delete Interest {"Success" if result else "Failed"}',
     )

@@ -40,7 +40,7 @@ def modify(news: schemas.NewsRequest,
 
     result = dao.db_modify_news(db, news)
     raise HTTPException(
-        status_code=200 if result else 401,
+        status_code=200 if result else 400,
         detail=f'Modify News {"Success" if result else "Failed"}',
     )
 
@@ -53,6 +53,6 @@ def delete(id: int,
     
     result = dao.db_delete_news(db, id)
     raise HTTPException(
-        status_code=200 if result else 401,
+        status_code=200 if result else 400,
         detail=f'Delete News {"Success" if result else "Failed"}',
     )

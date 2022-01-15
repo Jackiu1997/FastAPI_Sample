@@ -43,7 +43,7 @@ def modify(publication: schemas.PublicationRequest,
 
     result = dao.db_modify_publication(db, publication)
     raise HTTPException(
-        status_code=200 if result else 401,
+        status_code=200 if result else 400,
         detail=f'Modify Publication {"Success" if result else "Failed"}',
     )
 
@@ -56,6 +56,6 @@ def delete(id: int,
 
     result = dao.db_delete_publication(db, id)
     raise HTTPException(
-        status_code=200 if result else 401,
+        status_code=200 if result else 400,
         detail=f'Delete Publication {"Success" if result else "Failed"}',
     )

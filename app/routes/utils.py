@@ -23,12 +23,12 @@ async def upload(file: UploadFile = File(...), authorize: AuthJWT = Depends()):
     try:
         data = await file.read()
         if len(data) > CONFIG.IMAGE_LIMIT_SIZE:
-            raise HTTPException(status_code=501, detail="Image Size is Limited to 5MB")
+            raise HTTPException(status_code=403, detail="Image Size is Limited to 5MB")
 
         suffix = Path(file.filename).suffix
         file_name = hashlib.md5(file).hexdigest() + suffix
         open(f"{CONFIG.MEDIA_UPLOAD_DIR}/{file_name}", 'wb').write(data)
     except:
-        raise HTTPException(status_code=501, detail="Upload Image Failed")
+        raise HTTPException(status_code=500, detail="Upload Image Failed")
 
     return {"image": f"/static/{file_name}"}

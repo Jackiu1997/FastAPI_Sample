@@ -40,7 +40,7 @@ def modify(link: schemas.LinkRequest,
 
     result = dao.db_modify_link(db, link)
     raise HTTPException(
-        status_code=200 if result else 401,
+        status_code=200 if result else 400,
         detail=f'Modify Link {"Success" if result else "Failed"}',
     )
 
@@ -53,6 +53,6 @@ def delete(id: int,
     
     result = dao.db_delete_link(db, id)
     raise HTTPException(
-        status_code=200 if result else 401,
+        status_code=200 if result else 400,
         detail=f'Delete Link {"Success" if result else "Failed"}',
     )

@@ -40,7 +40,7 @@ def modify(member: schemas.MemberRequest,
 
     result = dao.db_modify_member(db, member)
     raise HTTPException(
-        status_code=200 if result else 401,
+        status_code=200 if result else 400,
         detail=f'Modify Member {"Success" if result else "Failed"}',
     )
 
@@ -53,6 +53,6 @@ def delete(id: int,
     
     result = dao.db_delete_member(db, id)
     raise HTTPException(
-        status_code=200 if result else 401,
+        status_code=200 if result else 400,
         detail=f'Delete Member {"Success" if result else "Failed"}',
     )
